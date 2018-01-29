@@ -23,15 +23,30 @@ Open http://localhost:4000/
 
 ```graphql
 {
-  user(id:0) {
+  user(id:1) {
     name
  		email
+    account
     password
+    id
   }
   users {
     name
  		email
+    account
     password
+    id
+  }
+  companies {
+    accountExpire
+    accountRemainingDays
+    address
+    description
+    emailDomain
+    id
+    industry
+    logo
+    name
   }
 }
 ```
@@ -42,27 +57,37 @@ Open http://localhost:4000/
 mutation{
   addUser(
     account: "demo",
+    email: "demo@gmail.com",
+    id: 10,
     name: "demo",
     password: "demo1234",
-    email: "demo@gmail.com"
   ){
     account
+    email
+    id
     name
     password
-    email
   }
-  addUserByInput(
-    userInfo:{
-      account: "luna",
-      name: "luna",
-      password: "luna1234",
-      email: "luna@gmail.com"
-    }
+  addCompany(
+    accountExpire: "2031-09-11",
+    accountRemainingDays: 4973,
+    address: "software design and delivery",
+    description: "software design and delivery",
+    emailDomain: "google.com",
+    id: 10,
+    industry: 4,
+    logo: "https://file-demo.slaius.com/39924c0bf47f45e98161db95c1ff3b59",
+    name: "Google"
   ){
-    account
+    accountExpire
+    accountRemainingDays
+    address
+    description
+    emailDomain
+    id
+    industry
+    logo
     name
-    password
-    email
   }
 }
 ```

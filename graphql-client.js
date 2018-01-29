@@ -7,72 +7,134 @@ var schema = buildSchema(`
     type User{
         account: String!
         email: String
+        id: ID!
         name: String
         password: String!
     }
-    input UserInput {
-        account: String!
-        email: String
-        name: String
-        password: String!
+
+    type Company{
+        accountExpire: String
+        accountRemainingDays: Int
+        address: String
+        description: String
+        emailDomain: String
+        id: ID!
+        industry: Int
+        logo: String
+        name: String!
     }
+
     type Query {
         user(id:Int!):User
         users:[User]
+        company(id:Int!):Company
+        companies:[Company]
     }
+
     type Mutation{
         addUser(account:String!,email:String,name:String,password:String!):User
-        addUserByInput(userInfo:UserInput!):User
+        addCompany(
+          accountExpire: String,
+          accountRemainingDays: Int,
+          address: String,
+          description: String,
+          emailDomain: String,
+          industry: Int,
+          logo: String,
+          name: String!):User
     }
 `);
 
-// data from sever
+// mock data
 var users=[
     {
-      account: 'Dale0326',
+      account: 'Dale1993',
       email: 'ying.du@seedlinktech.com',
+      id: 0,
       name: 'DaleDu',
       password: 'SeedlinkTech'
     },
     {
-      account: 'Renee0326',
+      account: 'Renee1993',
       email: 'renee@seedlinktech.com',
+      id: 1,
       name: 'Renee',
       password: 'SeedlinkTech'
     },
 ];
 
+var companies=[
+  {
+    accountExpire: '2031-09-11',
+    accountRemainingDays: 4973,
+    address: ' Si Dieu n\'avait fait la femme, il n\'aurait pas fait la fleur ',
+    description: ' Si Dieu n\'avait fait la femme, il n\'aurait pas fait la fleur ',
+    emailDomain: 'seedlinktech.com rcxue.com',
+    id: 0,
+    industry: 3,
+    logo: 'https://file-demo.slaius.com/39924c0bf47f45e98161db95c1ff3b59',
+    name: 'Seedlink'
+  },
+  {
+    accountExpire: '2031-09-11',
+    accountRemainingDays: 4973,
+    address: ' software design and delivery ',
+    description: ' software design and delivery ',
+    emailDomain: 'thoughtworks.com',
+    id: 1,
+    industry: 4,
+    logo: 'https://file-demo.slaius.com/39924c0bf47f45e98161db95c1ff3b59',
+    name: 'ThoughtWorks'
+  }
+]
+
 // define resolver
 var root= {
+
     // query resolver
-    user: function ({id}) {
-        return users[id];
+    user: ({id}) => {
+      return users.find(user => user.id === id);
     },
-    users: function () {
-        return users;
+    users: () => {
+      return users;
     },
-    //mutation resolver
-    addUser:function({account,email,name,password}){
-        var user={
+    company: ({id}) => {
+      return companies.find(company => company.id === id)
+    },
+    companies: () => {
+      return companies;
+    },
+
+    // mutation resolver
+    addUser: ({account,email,name,password}) => {
+        var user = {
             account:account,
             email:email,
             name:name,
-            password:password
+            password:password,
+            id: users.length
         };
         users.push(user);
         return user;
     },
-    addUserByInput:function({userInfo}){
-        var user={
-            account:userInfo.account,
-            email:userInfo.email,
-            name:userInfo.name,
-            password:userInfo.password
-        };
-        users.push(user);
-        return user;
+
+    addCompany: ({accountExpire, accountRemainingDays, address, description, emailDomain, industry, logo, name}) => {
+      var company = {
+          accountExpire: accountExpire,
+          accountRemainingDays: accountRemainingDays,
+          address: address,
+          description: description,
+          emailDomain: emailDomain,
+          id: companies.length,
+          industry: industry,
+          logo: logo,
+          name: name
+      }
+      companies.push(company);
+      return company;
     }
 };
+
 
 var app = express();
 app.use('/graphql', graphqlHTTP({
@@ -80,5 +142,6 @@ app.use('/graphql', graphqlHTTP({
     rootValue: root,
     graphiql: true, // Enabled GraphiQL
 }));
+
 
 app.listen(4000, () => console.log('Please enter this url in browser：localhost:4000/graphql'));
