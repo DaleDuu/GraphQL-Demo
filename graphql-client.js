@@ -4,7 +4,7 @@ var { buildSchema } = require('graphql');
 
 // define schema
 var schema = buildSchema(`
-    type User{
+    type User {
         account: String!
         email: String
         id: ID!
@@ -12,7 +12,7 @@ var schema = buildSchema(`
         password: String!
     }
 
-    type Company{
+    type Company {
         accountExpire: String
         accountRemainingDays: Int
         address: String
@@ -24,6 +24,13 @@ var schema = buildSchema(`
         name: String!
     }
 
+    type Industry {
+        description: String
+        enabled: Boolean
+        id: ID!
+        name: String
+    }
+
     type Query {
         user(id:Int!):User
         users:[User]
@@ -31,7 +38,7 @@ var schema = buildSchema(`
         companies:[Company]
     }
 
-    type Mutation{
+    type Mutation {
         addUser(account:String!,email:String,name:String,password:String!):User
         addCompany(
           accountExpire: String,
@@ -46,7 +53,7 @@ var schema = buildSchema(`
 `);
 
 // mock data
-var users=[
+var users = [
     {
       account: 'Dale1993',
       email: 'ying.du@seedlinktech.com',
@@ -63,7 +70,7 @@ var users=[
     },
 ];
 
-var companies=[
+var companies = [
   {
     accountExpire: '2031-09-11',
     accountRemainingDays: 4973,
@@ -88,6 +95,33 @@ var companies=[
   }
 ]
 
+var industries = [
+  {
+    description: 'industry.software_services.name.description',
+    enabled: true,
+    id: 1,
+    name: 'industry.software_services.name'
+  },
+  {
+    description: 'industry.capital_goods.name.description',
+    enabled: true,
+    id: 2,
+    name: 'industry.capital_goods.name'
+  },
+  {
+    description: 'industry.energy.name.description',
+    enabled: true,
+    id: 3,
+    name: 'industry.energy.name'
+  },
+  {
+    description: 'industry.real_estate.name.description',
+    enabled: true,
+    id: 4,
+    name: 'industry.real_estate.name'
+  }
+]
+
 // define resolver
 var root= {
 
@@ -95,14 +129,32 @@ var root= {
     user: ({id}) => {
       return users.find(user => user.id === id);
     },
+
     users: () => {
       return users;
     },
+
     company: ({id}) => {
-      return companies.find(company => company.id === id)
+      // const company = companies.find(company => company.id === id);
+      // console.log(company);
+      // company.industry = industries.find(industry => industry.id === company.industry);
+      // console.log(company);
+      return companies.find(company => company.id === id);
     },
+
     companies: () => {
+      // return companies.map(company => {
+      //     company.industry = industries.find(industry => industry.id === company.industry);
+      // });
       return companies;
+    },
+
+    industry: ({id}) => {
+      return industries.find(industry => industry.id === id);
+    },
+
+    industries: () => {
+      return industries;
     },
 
     // mutation resolver
@@ -134,7 +186,6 @@ var root= {
       return company;
     }
 };
-
 
 var app = express();
 app.use('/graphql', graphqlHTTP({

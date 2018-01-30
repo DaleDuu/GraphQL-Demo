@@ -22,6 +22,7 @@ Open http://localhost:4000/
 * Client Query
 
 ```graphql
+
 {
   user(id:1) {
     name
@@ -36,6 +37,20 @@ Open http://localhost:4000/
     account
     password
     id
+    }
+}
+
+{
+  company(id:2) {
+    accountExpire
+    accountRemainingDays
+    address
+    description
+    emailDomain
+    id
+    industry
+    logo
+    name
   }
   companies {
     accountExpire
@@ -46,6 +61,13 @@ Open http://localhost:4000/
     id
     industry
     logo
+    name
+  }
+}
+
+{
+  industries(first: 3) {
+    description
     name
   }
 }
@@ -99,3 +121,42 @@ mutation{
 ```
 node graphql-server.js
 ```
+
+
+
+// GetCompanyById
+{
+  Company(id: ...) {
+    accountExpire
+    accountRemainingDays
+    address
+    description
+    emailDomain
+    id
+    industry {
+      name
+      description
+    }
+    logo
+    name
+  }
+}
+
+// GetCompanies
+
+{
+  Companies {
+    accountExpire
+    accountRemainingDays
+    address
+    description
+    emailDomain
+    id
+    industry {
+      name
+      description
+    }
+    logo
+    name
+  }
+}
